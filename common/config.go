@@ -93,6 +93,7 @@ type Config struct {
 	Replace        bool              // use replace into, instead of insert
 	Update         []string          // use update, instead of insert, primary key list, separated by comma
 	Table          string            // table name
+	OutputTable    string            // output table name
 	CompleteInsert bool              // complete-insert
 	HexBLOB        []string          // blob column names
 	IgnoreColumns  []string          // ignore column list

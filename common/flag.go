@@ -51,6 +51,7 @@ type Option struct {
 	Socket              string  `short:"S" long:"socket" description:"unix socket file"`
 	Database            string  `short:"d" long:"database" description:"mysql/sql server: database name, oracle: service_name/sid, sqlite: database file path, csv: database directory"`
 	Table               string  `long:"table" description:"table name"`
+	OutputTable         string  `long:"tableout" description:"output table name"`
 	Charset             string  `long:"charset" default:"utf8mb4" description:"connection charset"`
 	Limit               int     `long:"limit" description:"query result lines limit"`
 	Sample              float64 `long:"sample" default:"1" description:"sampling rate"`
@@ -284,9 +285,10 @@ func ParseFlags() (Config, error) {
 
 	// --query is empty and -table not empty generate full select query
 	if opt.Table != "" && opt.Query == "" {
+		c.Server = strings.ToLower(opt.Server)
+		c.Target = strings.ToLower(opt.Target)
+
 		if opt.Limit != 0 {
-			c.Server = strings.ToLower(opt.Server)
-			c.Target = strings.ToLower(opt.Target)
 			switch strings.ToLower(opt.Server) {
 			case "oracle":
 				opt.Query = fmt.Sprintf("SELECT * FROM %s WHERE ROWNUM <= %d", opt.Table, opt.Limit)
@@ -382,6 +384,7 @@ func ParseFlags() (Config, error) {
 		Replace:        opt.Replace,
 		Update:         parseCommaFlag(opt.Update),
 		Table:          opt.Table,
+		OutputTable:    opt.OutputTable,
 		CompleteInsert: opt.CompleteInsert,
 		HexBLOB:        parseCommaFlag(opt.HexBLOB),
 		IgnoreColumns:  parseCommaFlag(opt.IgnoreColumns),

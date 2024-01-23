@@ -77,7 +77,12 @@ func (c Config) SQLInsertPrefix(header Row) (string, error) {
 	var prefix string
 	var err error
 
-	if c.Table == "" {
+	table := c.Table
+	if c.OutputTable != "" {
+		table = c.OutputTable
+	}
+
+	if table == "" {
 		return prefix, fmt.Errorf("no table name")
 	}
 
@@ -102,7 +107,7 @@ func (c Config) SQLInsertPrefix(header Row) (string, error) {
 	}
 
 	// Table name
-	tableName := fmt.Sprint(c.QuoteKey(c.Table))
+	tableName := fmt.Sprint(c.QuoteKey(table))
 
 	// INSERT
 	prefix = fmt.Sprintf("INSERT INTO %s %s VALUES ",
