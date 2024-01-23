@@ -18,18 +18,24 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-
-	"github.com/LianjiaTech/d18n/common"
+	"strings"
 
 	json "github.com/json-iterator/go"
+
+	"github.com/LianjiaTech/d18n/common"
 )
 
 func emportJSON(e *EmportStruct, conn *sql.DB) error {
 	var err error
 
-	fd, err := os.Open(e.Config.File)
-	if err != nil {
-		return err
+	var fd *os.File
+	if strings.EqualFold(e.Config.File, "stdin") {
+		fd = os.Stdin
+	} else {
+		fd, err = os.Open(e.Config.File)
+		if err != nil {
+			return err
+		}
 	}
 	defer fd.Close()
 

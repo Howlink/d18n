@@ -15,12 +15,18 @@ package emport
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"strings"
 
 	xlsx "github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
 func emportXlsx(e *EmportStruct, conn *sql.DB) error {
+	if strings.EqualFold(e.Config.File, "stdin") {
+		return errors.New("xlsx not support stdin")
+	}
+
 	fd, err := xlsx.OpenFile(e.Config.File)
 	if err != nil {
 		return err

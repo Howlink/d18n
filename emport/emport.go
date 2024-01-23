@@ -86,6 +86,11 @@ func emportRows(e *EmportStruct, conn *sql.DB) error {
 
 	// file type switch
 	suffix := strings.ToLower(strings.TrimLeft(filepath.Ext(e.Config.File), "."))
+	if suffix == "" {
+		suffix = strings.ToLower(strings.Trim(filepath.Base(e.Config.File), "."))
+		e.Config.File = "stdin"
+	}
+
 	switch suffix {
 	case "tsv": // tab-separated values
 		e.Config.Comma = '\t'

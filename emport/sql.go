@@ -26,13 +26,19 @@ import (
 // emportSQL import sql file into database
 func emportSQL(e *EmportStruct, conn *sql.DB) error {
 	var err error
-	f, err := os.Open(e.Config.File)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
 
-	s := bufio.NewScanner(f)
+	var fd *os.File
+	if strings.EqualFold(e.Config.File, "stdin") {
+		fd = os.Stdin
+	} else {
+		fd, err = os.Open(e.Config.File)
+		if err != nil {
+			return err
+		}
+	}
+	defer fd.Close()
+
+	s := bufio.NewScanner(fd)
 	s.Buffer([]byte{}, e.Config.MaxBufferSize)
 	s.Split(common.SQLReadLine)
 

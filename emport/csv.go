@@ -18,14 +18,20 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
+	"strings"
 )
 
 func emportCSV(e *EmportStruct, conn *sql.DB) error {
 	var err error
 
-	fd, err := os.Open(e.Config.File)
-	if err != nil {
-		return err
+	var fd *os.File
+	if strings.EqualFold(e.Config.File, "stdin") {
+		fd = os.Stdin
+	} else {
+		fd, err = os.Open(e.Config.File)
+		if err != nil {
+			return err
+		}
 	}
 	defer fd.Close()
 
