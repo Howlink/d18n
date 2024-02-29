@@ -22,11 +22,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LianjiaTech/d18n/common"
-
 	"github.com/bykof/gostradamus"
 	"github.com/dnnrly/abbreviate/data"
 	"github.com/dnnrly/abbreviate/domain"
+
+	"github.com/LianjiaTech/d18n/common"
 )
 
 // Smoke replace every character with mask
@@ -118,11 +118,12 @@ func SmokeRight(args ...interface{}) (ret string, err error) {
 	}
 
 	ret = fmt.Sprint(args[0])
-	l := len(ret)
+	runes := []rune(ret)
+	l := len(runes)
 	src := fmt.Sprint(args[2])
 
 	if n < l {
-		ret = ret[:l-n] + strings.Repeat(src, n)
+		ret = string(runes[:l-n]) + strings.Repeat(src, n)
 	} else {
 		ret = strings.Repeat(src, l)
 	}
