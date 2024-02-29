@@ -102,9 +102,17 @@ func emportHTML(e *EmportStruct, conn *sql.DB) error {
 				sqlCounter++
 				sql += e.Config.SQLMultiValues(sqlCounter, insertPrefix, values)
 				if e.Config.ExtendedInsert <= 1 || sqlCounter%e.Config.ExtendedInsert == 0 {
+					line := 1
+					if e.Config.ExtendedInsert > 1 {
+						line = e.Config.ExtendedInsert
+					}
+
 					err = e.executeSQL(sql, conn)
 					if err != nil {
-						return err
+						fmt.Fprintf(os.Stderr, "error=%s; sql=%s", err.Error(), sql)
+						sqlCounter -= line
+						e.Status.ImportFailRows += line
+						// return err
 					}
 					sql = ""
 				}
@@ -128,6 +136,15 @@ func emportHTML(e *EmportStruct, conn *sql.DB) error {
 	// execute last SQL
 	if sql != "" {
 		err = e.executeSQL(sql, conn)
+		if err != nil {
+			line := 1
+			if e.Config.ExtendedInsert > 1 {
+				line = sqlCounter % e.Config.ExtendedInsert
+			}
+			fmt.Fprintf(os.Stderr, "error=%s; sql=%s", err.Error(), sql)
+			sqlCounter -= line
+			e.Status.ImportFailRows += line
+		}
 	}
 	e.Status.Rows = sqlCounter
 

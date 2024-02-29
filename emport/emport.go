@@ -25,10 +25,11 @@ import (
 )
 
 type emportStatus struct {
-	Header   []common.HeaderColumn // Column Header, include column type info
-	Lines    int                   // file lines
-	Rows     int                   // rows of values
-	TimeCost int64                 // time cost
+	Header         []common.HeaderColumn // Column Header, include column type info
+	Lines          int                   // file lines
+	Rows           int                   // rows of values
+	ImportFailRows int                   // rows of failed
+	TimeCost       int64                 // time cost
 }
 
 type EmportStruct struct {
@@ -174,6 +175,7 @@ func (e *EmportStruct) ShowStatus() error {
 	println(
 		"File Lines:", e.Status.Lines,
 		"Import Rows:", e.Status.Rows,
+		"Failed Rows:", e.Status.ImportFailRows,
 		"Total Cost:", fmt.Sprint(time.Duration(e.Status.TimeCost)*time.Nanosecond),
 	)
 
