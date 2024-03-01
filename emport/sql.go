@@ -68,7 +68,7 @@ func emportSQL(e *EmportStruct, conn *sql.DB) error {
 		sqlCounter++
 		err = e.executeSQL(sqlString, conn)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error=%s; sql=%s", err.Error(), sqlString)
+			fmt.Fprintf(os.Stderr, "error=%s; sql=%s\n", err.Error(), sqlString)
 			sqlCounter--
 			e.Status.ImportFailRows++
 			// return err

@@ -107,7 +107,7 @@ func emportXlsx(e *EmportStruct, conn *sql.DB) error {
 
 				err = e.executeSQL(sql, conn)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "error=%s; sql=%s", err.Error(), sql)
+					fmt.Fprintf(os.Stderr, "error=%s; sql=%s\n", err.Error(), sql)
 					sqlCounter -= line
 					e.Status.ImportFailRows += line
 					// return err
@@ -124,7 +124,7 @@ func emportXlsx(e *EmportStruct, conn *sql.DB) error {
 				if e.Config.ExtendedInsert > 1 {
 					line = sqlCounter % e.Config.ExtendedInsert
 				}
-				fmt.Fprintf(os.Stderr, "error=%s; sql=%s", err.Error(), sql)
+				fmt.Fprintf(os.Stderr, "error=%s; sql=%s\n", err.Error(), sql)
 				sqlCounter -= line
 				e.Status.ImportFailRows += line
 			}
