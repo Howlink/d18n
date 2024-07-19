@@ -293,7 +293,7 @@ func ParseFlags() (Config, error) {
 			case "oracle":
 				opt.Query = fmt.Sprintf("SELECT * FROM %s WHERE ROWNUM <= %d", opt.Table, opt.Limit)
 			case "sqlserver", "mssql":
-				opt.Query = fmt.Sprintf("SELECT TOP %d * FROM %s WITH (NOLOCK)", opt.Limit, opt.Table)
+				opt.Query = fmt.Sprintf("SELECT TOP %d * FROM [%s] WITH (NOLOCK)", opt.Limit, opt.Table)
 			case "mysql":
 				opt.Query = fmt.Sprintf("SELECT * FROM %s LIMIT %d LOCK IN SHARE MODE", opt.Table, opt.Limit)
 			default:

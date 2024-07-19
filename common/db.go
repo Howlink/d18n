@@ -64,7 +64,7 @@ func (c Config) GetColumnTypes() ([]*sql.ColumnType, error) {
 	var sql string
 	switch c.Server {
 	case "mssql", "sqlserver":
-		sql = "SELECT TOP 0 * FROM %s"
+		sql = "SELECT TOP 0 * FROM %s" //此处不能对%s添加双引号，否则使用import方法会报错
 	case "oracle":
 		sql = "SELECT * FROM %s WHERE ROWNUM < 0"
 	case "mysql": // tidb not support LOCK IN SHARE MODE
