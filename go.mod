@@ -23,7 +23,7 @@ require (
 	github.com/jmrobles/h2go v0.5.0
 	github.com/json-iterator/go v1.1.11
 	github.com/kr/pretty v0.2.1
-	github.com/lib/pq v1.10.2
+	github.com/lib/pq v1.10.9
 	github.com/mithrandie/csvq-driver v1.4.3
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pingcap/parser v0.0.0-20210525032559-c37778aff307
@@ -49,3 +49,5 @@ replace github.com/dgrijalva/jwt-go => github.com/form3tech-oss/jwt-go v3.2.6-0.
 
 // google.golang.org/grpc/naming: module google.golang.org/grpc@latest found (v1.49.0), but does not contain package google.golang.org/grpc/naming
 replace google.golang.org/grpc => google.golang.org/grpc v1.29.0
+
+replace github.com/auxten/postgresql-parser => github.com/CodeMeng90/postgresql-parser v1.0.2-howlink
