@@ -94,7 +94,12 @@ func emportCSV(e *EmportStruct, conn *sql.DB) error {
 			if e.Config.ExtendedInsert > 1 {
 				line = e.Config.ExtendedInsert
 			}
-
+			//oracle需要删除最后的";\n",否则会报错
+			switch e.Config.Server {
+			case "oracle":
+				sql = strings.TrimSuffix(sql, ";\n")
+			default:
+			}
 			err = e.executeSQL(sql, conn)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "error=%s; sql=%s\n", err.Error(), sql)

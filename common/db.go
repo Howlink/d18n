@@ -48,6 +48,7 @@ import (
 	_ "github.com/jmrobles/h2go"
 )
 
+// 脱敏时import调用
 func (c Config) GetColumnTypes() ([]*sql.ColumnType, error) {
 	db, err := c.NewConnection()
 	if err != nil {
@@ -64,7 +65,7 @@ func (c Config) GetColumnTypes() ([]*sql.ColumnType, error) {
 	var sql string
 	switch c.Server {
 	case "mssql", "sqlserver":
-		sql = "SELECT TOP 0 * FROM %s" //此处不能对%s添加双引号，否则使用import方法会报错
+		sql = "SELECT TOP 0 * FROM %s"
 	case "oracle":
 		sql = "SELECT * FROM %s WHERE ROWNUM < 0"
 	case "mysql": // tidb not support LOCK IN SHARE MODE
@@ -373,6 +374,11 @@ func (c Config) QuoteKey(str string) string {
 		if c.ANSIQuotes {
 			return strconv.Quote(str)
 		} else {
+			if strings.Contains(str, ".") {
+				owner := strings.Split(str, ".")[0]
+				table := strings.Split(str, ".")[1]
+				str = fmt.Sprintf(`%s."%s"`, owner, table)
+			}
 			return str
 		}
 	default:

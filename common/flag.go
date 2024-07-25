@@ -291,7 +291,13 @@ func ParseFlags() (Config, error) {
 		if opt.Limit != 0 {
 			switch strings.ToLower(opt.Server) {
 			case "oracle":
-				opt.Query = fmt.Sprintf("SELECT * FROM %s WHERE ROWNUM <= %d", opt.Table, opt.Limit)
+				if strings.Contains(opt.Table, ".") {
+					owner := strings.Split(opt.Table, ".")[0]
+					table := strings.Split(opt.Table, ".")[1]
+					opt.Query = fmt.Sprintf("SELECT * FROM %s.\"%s\" WHERE ROWNUM <= %d", owner, table, opt.Limit)
+				} else {
+					opt.Query = fmt.Sprintf("SELECT * FROM %s WHERE ROWNUM <= %d", opt.Table, opt.Limit)
+				}
 			case "sqlserver", "mssql":
 				opt.Query = fmt.Sprintf("SELECT TOP %d * FROM [%s] WITH (NOLOCK)", opt.Limit, opt.Table)
 			case "mysql":
@@ -300,7 +306,7 @@ func ParseFlags() (Config, error) {
 				opt.Query = fmt.Sprintf("SELECT * FROM %s LIMIT %d", opt.Table, opt.Limit)
 			}
 		} else {
-			opt.Query = fmt.Sprintf("SELECT * FROM %s", c.QuoteKey(opt.Table))
+			opt.Query = fmt.Sprintf("SELECT * FROM %s", c.QuoteKey(opt.Table)) //QuoteKey下处理特殊字符串的表名问题
 		}
 	}
 
