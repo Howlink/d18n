@@ -173,7 +173,9 @@ func Fake(args ...interface{}) (ret string, err error) {
 		return faker.SSN(), nil
 	case "birthday":
 		daysAgo := faker.Number(0, 365*100) // last 100 years random date
-		return time.Now().Add(-time.Duration(daysAgo) * 24 * time.Hour).Format("2006-01-02"), nil
+		//return time.Now().Add(-time.Duration(daysAgo) * 24 * time.Hour).Format("2006-01-02"), nil
+		//脱敏的“随机日期”规则，对应的是这个方式，而只有年月日，oracle的date和timestamp类型脱敏到新表的日期插入会报错，所以改成年月日时分秒
+		return time.Now().Add(-time.Duration(daysAgo) * 24 * time.Hour).Format("2006-01-02 15:04:05"), nil
 	case "cc", "creditcard":
 		return faker.CreditCard().Number, nil
 	case "url":

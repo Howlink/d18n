@@ -104,7 +104,21 @@ func (d *DetectStruct) DetectQuery() error {
 
 	// check column names
 	d.checkHeader()
-
+	if d.Config.Server == "oracle" {
+		//oracle有时间戳类型timestamp时，需要特殊处理，否则后面scan会报错
+		var hasTimeStamp bool
+		for _, columnType := range header {
+			upperDBTypeName := strings.ToUpper(columnType.DatabaseTypeName())
+			if strings.Contains(upperDBTypeName, "TIMESTAMP") || strings.Contains(upperDBTypeName, "INTERVAL") ||
+				upperDBTypeName == "TIMETZ" {
+				hasTimeStamp = true
+				break
+			}
+		}
+		if hasTimeStamp {
+			return nil
+		}
+	}
 	// check column values
 	for rows.Next() {
 		d.Status.Lines++
@@ -117,6 +131,7 @@ func (d *DetectStruct) DetectQuery() error {
 		cols := make([]interface{}, len(header))
 		for j := range columns {
 			cols[j] = &columns[j]
+			//fmt.Println(columns[j])
 		}
 
 		if err := rows.Scan(cols...); err != nil {
@@ -127,6 +142,7 @@ func (d *DetectStruct) DetectQuery() error {
 		for j, col := range columns {
 			// pass NULL string
 			if col.Valid {
+				//fmt.Printf("col:%s->%v \n", col.String, d.checkValue(col.String))
 				d.Status.Columns[d.Status.Header[j].Name] = append(d.Status.Columns[d.Status.Header[j].Name], d.checkValue(col.String)...)
 			}
 		}
@@ -231,6 +247,7 @@ func (d *DetectStruct) checkValue(value string) []string {
 // ShowStatus print detect status
 func (d *DetectStruct) ShowStatus() error {
 	for k, v := range d.Status.Columns {
+		//fmt.Printf("showStatus: %s: %v-->%v\n", k, v, common.StringUnique(v))
 		d.Status.Columns[k] = common.StringUnique(v)
 	}
 
