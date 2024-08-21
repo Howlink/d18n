@@ -98,8 +98,14 @@ func emportCSV(e *EmportStruct, conn *sql.DB) error {
 			switch e.Config.Server {
 			case "oracle":
 				sql = strings.TrimSuffix(sql, ";\n")
+			case "mssql", "sqlserver":
+				if e.Config.CompleteInsert { //CDM脱敏，只有在存在标识列的时候会传参--complete-insert
+
+					sql = fmt.Sprintf("SET IDENTITY_INSERT [%s] ON %s SET IDENTITY_INSERT [%s] OFF;", e.Config.Table, sql, e.Config.Table)
+				}
 			default:
 			}
+			//fmt.Println(sql)
 			err = e.executeSQL(sql, conn)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "error=%s; sql=%s\n", err.Error(), sql)
