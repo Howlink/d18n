@@ -242,7 +242,7 @@ func (c Config) dsnOracle() string {
 
 // dsnSQLServer concat sqlserver dsn string
 func (c Config) dsnSQLServer() string {
-	return fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s",
+	return fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s&encrypt=disable",
 		c.User, c.Password, c.Host, c.Port, c.Database,
 	)
 }
