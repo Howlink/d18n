@@ -45,22 +45,16 @@ go_version_check:
 release: build
 	@echo "$(CGREEN)Cross platform building for release ...$(CEND)"
 	@mkdir -p release
-	@for GOOS in darwin; do \
+	@for GOOS in linux; do \
 		for GOARCH in amd64 arm64; do \
-			for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
-				b=$$(basename $${d}) ; \
-				echo "Building $${b}.$${GOOS}-$${GOARCH} ..."; \
-				GOOS=$${GOOS} GOARCH=$${GOARCH} go build -trimpath -v -o release/$${b}.$${GOOS}-$${GOARCH} $$d 2>/dev/null; \
-			done ; \
+			echo "Building release/$${GOOS}/$${GOARCH}/cdm-d18n ..."; \
+			CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go1.17.13 build -installsuffix=static --ldflags=all='-s -w' -trimpath -o release/$${GOOS}/$${GOARCH}/cdm-d18n cmd/d18n/d18n.go; \
 		done ;\
 	done
-	@for GOOS in linux windows; do \
-		for GOARCH in amd64 arm64; do \
-			for d in $$(go list -f '{{if (eq .Name "main")}}{{.ImportPath}}{{end}}' ./...); do \
-				b=$$(basename $${d}) ; \
-				echo "Building $${b}.$${GOOS}-$${GOARCH} ..."; \
-				GOOS=$${GOOS} GOARCH=$${GOARCH} go build -trimpath -v -o release/$${b}.$${GOOS}-$${GOARCH} $$d ; \
-			done ; \
+	@for GOOS in windows; do \
+		for GOARCH in amd64 ; do \
+			echo "Building release/$${GOOS}/cdm-d18n ..."; \
+			CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go1.17.13 build -installsuffix=static --ldflags=all='-s -w' -trimpath -o release/$${GOOS}/cdm-d18n.exe cmd/d18n/d18n.go; \
 		done ;\
 	done
 
