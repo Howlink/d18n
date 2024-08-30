@@ -53,8 +53,8 @@ release: build
 	done
 	@for GOOS in windows; do \
 		for GOARCH in amd64 ; do \
-			echo "Building release/$${GOOS}/cdm-d18n ..."; \
-			CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go1.17.13 build -installsuffix=static --ldflags=all='-s -w' -trimpath -o release/$${GOOS}/cdm-d18n.exe cmd/d18n/d18n.go; \
+			echo "Building release/$${GOOS}/$${GOARCH}/cdm-d18n ..."; \
+			CGO_ENABLED=0 GOOS=$${GOOS} GOARCH=$${GOARCH} go1.17.13 build -installsuffix=static --ldflags=all='-s -w' -trimpath -o release/$${GOOS}/$${GOARCH}/cdm-d18n.exe cmd/d18n/d18n.go; \
 		done ;\
 	done
 
