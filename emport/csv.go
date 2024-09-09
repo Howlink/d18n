@@ -94,13 +94,12 @@ func emportCSV(e *EmportStruct, conn *sql.DB) error {
 			if e.Config.ExtendedInsert > 1 {
 				line = e.Config.ExtendedInsert
 			}
-			//oracle需要删除最后的";\n",否则会报错
+			//oracle需要删除最后的";\n",否则会报错，目前CDM使用oracle脱敏采用逐条插入
 			switch e.Config.Server {
 			case "oracle":
 				sql = strings.TrimSuffix(sql, ";\n")
 			case "mssql", "sqlserver":
 				if e.Config.CompleteInsert { //CDM脱敏，只有在存在标识列的时候会传参--complete-insert
-
 					sql = fmt.Sprintf("SET IDENTITY_INSERT [%s] ON %s SET IDENTITY_INSERT [%s] OFF;", e.Config.Table, sql, e.Config.Table)
 				}
 			default:
@@ -119,6 +118,16 @@ func emportCSV(e *EmportStruct, conn *sql.DB) error {
 
 	// execute last SQL
 	if sql != "" {
+		//oracle需要删除最后的";\n",否则会报错，目前CDM使用oracle脱敏采用逐条插入
+		switch e.Config.Server {
+		case "oracle":
+			sql = strings.TrimSuffix(sql, ";\n")
+		case "mssql", "sqlserver":
+			if e.Config.CompleteInsert { //CDM脱敏，只有在存在标识列的时候会传参--complete-insert
+				sql = fmt.Sprintf("SET IDENTITY_INSERT [%s] ON %s SET IDENTITY_INSERT [%s] OFF;", e.Config.Table, sql, e.Config.Table)
+			}
+		default:
+		}
 		err = e.executeSQL(sql, conn)
 		if err != nil {
 			line := 1
