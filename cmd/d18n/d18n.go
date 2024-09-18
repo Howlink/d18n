@@ -81,6 +81,12 @@ func main() {
 		return
 	}
 
+	//execute sql
+	if c.Execute {
+		common.PanicIfError(executeQuery())
+		return
+	}
+
 	if c.Interactive {
 		err = saveRows()
 		if err != nil {
@@ -153,4 +159,13 @@ func detectRows() error {
 
 	// show detect status
 	return d.ShowStatus()
+}
+
+// 执行query传入的sql
+func executeQuery() error {
+	_, err := c.ExecResult()
+	if err != nil {
+		return err
+	}
+	return nil
 }

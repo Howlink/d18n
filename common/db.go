@@ -46,6 +46,8 @@ import (
 	_ "github.com/taozle/go-hive-driver"
 	// h2
 	_ "github.com/jmrobles/h2go"
+	//dameng go driver
+	_ "gitee.com/chunanyong/dm"
 )
 
 // 脱敏时import调用
@@ -158,6 +160,8 @@ func (c Config) NewConnection() (*sql.DB, error) {
 		dsn = c.dsnHive()
 	case "h2":
 		dsn = c.dsnH2()
+	case "dm": //dameng
+		dsn = c.dsnDm()
 	}
 	// --dsn flag highest level
 	if c.DSN != "" {
@@ -196,6 +200,14 @@ func (c Config) SetForeignKeyChecks(enable bool, conn *sql.DB, args ...string) e
 	}
 
 	return err
+}
+
+// dsnDm concat dameng dsn string
+func (c Config) dsnDm() string {
+	//dsn := fmt.Sprintf("dm://%s:%s@%s:%s?schema=%s",
+	dsn := fmt.Sprintf("dm://%s:%s@%s:%s",
+		c.User, c.Password, c.Host, c.Port)
+	return dsn
 }
 
 // dsnMySQL concat mysql dsn string
@@ -370,6 +382,8 @@ func (c Config) QuoteKey(str string) string {
 	case "sqlserver", "mssql":
 		return "[" + str + "]"
 	// oracle default is case insensitive, add quote make key case sensitive
+	case "dm":
+		return fmt.Sprintf("%s.%s", strconv.Quote(c.Database), strconv.Quote(str))
 	case "oracle":
 		if c.ANSIQuotes {
 			return strconv.Quote(str)

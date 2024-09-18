@@ -3,6 +3,7 @@ module github.com/LianjiaTech/d18n
 go 1.16
 
 require (
+	gitee.com/chunanyong/dm v1.8.16
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.4.0
 	github.com/ClickHouse/clickhouse-go v1.4.5
 	github.com/andrewarchi/gocipher v0.0.0-20201117064119-d399f25a1970

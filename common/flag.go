@@ -58,6 +58,7 @@ type Option struct {
 	Timeout             int     `long:"timeout" description:"query timeout in seconds"`
 
 	// read from fille
+	Execute          bool   `long:"execute" description:"execute query from file"`
 	Query            string `short:"e" long:"query" description:"query read from file or command line"`
 	Parser           string `long:"parser" default:"pingcap" description:"query parser: tidb, cockroach"`
 	Vertical         bool   // print result vertical
@@ -302,11 +303,20 @@ func ParseFlags() (Config, error) {
 				opt.Query = fmt.Sprintf("SELECT TOP %d * FROM [%s] WITH (NOLOCK)", opt.Limit, opt.Table)
 			case "mysql":
 				opt.Query = fmt.Sprintf("SELECT * FROM %s LIMIT %d LOCK IN SHARE MODE", opt.Table, opt.Limit)
+			case "dm": //dameng, 达梦数据库,opt.Database表示schema
+				opt.Query = fmt.Sprintf(`SELECT * FROM "%s"."%s" LIMIT %d`, opt.Database, opt.Table, opt.Limit)
+				//此处不能用c.QuoteKey(opt.Table)，此时config内参数还都为空
 			default:
 				opt.Query = fmt.Sprintf("SELECT * FROM %s LIMIT %d", opt.Table, opt.Limit)
 			}
 		} else {
-			opt.Query = fmt.Sprintf("SELECT * FROM %s", c.QuoteKey(opt.Table)) //QuoteKey下处理特殊字符串的表名问题
+			switch strings.ToLower(opt.Server) {
+			case "dm":
+				opt.Query = fmt.Sprintf(`SELECT * FROM "%s"."%s"`, opt.Database, opt.Table)
+			default:
+				opt.Query = fmt.Sprintf("SELECT * FROM %s", c.QuoteKey(opt.Table)) //QuoteKey下处理特殊字符串的表名问题
+			}
+
 		}
 	}
 
@@ -351,6 +361,7 @@ func ParseFlags() (Config, error) {
 
 		Interactive:             opt.InteractiveQuery,
 		Vertical:                opt.Vertical,
+		Execute:                 opt.Execute,
 		Query:                   opt.Query,
 		Parser:                  opt.Parser,
 		File:                    opt.File,
