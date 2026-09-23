@@ -15,11 +15,12 @@ package emport
 
 import (
 	"database/sql"
-	"encoding/csv"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/LianjiaTech/d18n/internal/valuecsv"
 )
 
 func emportCSV(e *EmportStruct, conn *sql.DB) error {
@@ -41,7 +42,7 @@ func emportCSV(e *EmportStruct, conn *sql.DB) error {
 		return err
 	}
 
-	r := csv.NewReader(fd)
+	r := valuecsv.NewReader(fd)
 	r.Comma = e.Config.Comma
 	var sql string
 	var sqlCounter int
